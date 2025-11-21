@@ -17,10 +17,10 @@ library('RColorBrewer'); packageVersion('RColorBrewer')
 theme_set(theme_pubr())
 qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
 col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
-rootstock_palette<- c("101-14 MGT" = "#46436b", "3309 Couderc" = "#7570B3",
-                      "Schwarzmann" = "#aca9d1", "110 Richter" = "#105f47", "1103 Paulsen" = "#1b9e77",
-                      "140Ru" = "#76c5ad", "420A" = "#453301", "775 Paulsen" = "#8a6701",
-                      "Kober 5BB" = "#E6AB02", "Teleki 5C" = "#f0cd67")
+rootstock_palette<- c("101-14 MGT" = "#46436b", "3309 Couderc" = "#7570B3","Schwarzmann" = "#aca9d1",
+                      "110 Richter" = "#0a3d2e", "1103 Paulsen" = "#1b9e77",
+                      "140Ru" = "#48e0b3",  "775 Paulsen" = "#d3f8ed",
+                      "420A" = "#453301", "Kober 5BB" = "#E6AB02", "Teleki 5C" = "#f0cd67")
 
 #### Functions ####
 # Function from the R cookbook
@@ -318,6 +318,8 @@ summarySE(stratified_flavin_CPM_w_meta, measurevar = "g__Mesorhizobium.s__Mesorh
 
 # superpathway of N-acetylglucosamine, N-acetylmannosamine and N-acetylneuraminate degradation
 Comm_lvl_CPM_w_meta$`superpathway of N-acetylglucosamine, N-acetylmannosamine and N-acetylneuraminate degradation`
+# Correct plotting order
+levels(Comm_lvl_CPM_w_meta$rootstock) <- names(rootstock_palette)
 
 #plot
 N_acetylglucosamine_plot <- ggplot(Comm_lvl_CPM_w_meta, aes(x=rootstock, y=` superpathway of N-acetylglucosamine, N-acetylmannosamine and N-acetylneuraminate degradation`, fill = rootstock)) +
@@ -325,6 +327,7 @@ N_acetylglucosamine_plot <- ggplot(Comm_lvl_CPM_w_meta, aes(x=rootstock, y=` sup
   geom_boxplot(outlier.shape = NA, alpha = 0.80, lwd=0.5, color = "black") +
   xlab (NULL) + ylab("GLCMANNANAUT-PWY (CPM)") +
   scale_fill_manual(name="Rootstock", values = rootstock_palette) +
+  theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust=1), legend.position = "none",
         axis.title.y = element_text(margin = margin(r = 10))) +
   facet_wrap(~scion, labeller = labeller(scion = c("cabernet sauvignon" = "Cabernet Sauvignon",
@@ -351,6 +354,7 @@ pyrimidine_plot <- ggplot(Comm_lvl_CPM_w_meta, aes(x=rootstock, y=` superpathway
   geom_boxplot(outlier.shape = NA, alpha = 0.8, lwd=0.5, color = "black") +
   xlab (NULL) + ylab("RIBOSYN2-PWY (CPM)") +
   scale_fill_manual(name="Rootstock", values = rootstock_palette) +
+  theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust=1), legend.position = "none",
         axis.title.y = element_text(margin = margin(r = 10))) +
   facet_wrap(~scion, labeller = labeller(scion = c("cabernet sauvignon" = "Cabernet Sauvignon",
@@ -406,6 +410,7 @@ Abund_occupancy_df$Core <- factor(Abund_occupancy_df$Core, levels = c("Yes", "No
 log10_top_95_core <- ggplot(Abund_occupancy_df, aes(x = ABUND, y = OCCUP, color = Core)) + geom_point() +
   labs(x = "Log10(mean CPM)", y = "Occupancy") +
   scale_color_manual(values = c("lightgreen", "firebrick"), labels = c("True", "False")) +
+  theme_bw() +
   theme(legend.position = 'right')
 
 ggsave("figures/Core_95_path.svg", log10_top_95_core, height = 6, width = 8)
